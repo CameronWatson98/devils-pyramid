@@ -96,19 +96,8 @@ class _MainViewState extends State<MainView> {
           selector: (state) {
             return state.selectedOptions;
           },
-          builder: (context, state) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: state.asMap().entries.map((entry) {
-                int index = entry.key;
-                NumberWithSymbol option = entry.value;
-                return Text(
-                  index == 0
-                      ? option.number.toString()
-                      : ' ${option.symbol} ${option.number}',
-                );
-              }).toList(),
-            );
+          builder: (context, selectedOptions) {
+            return Text(equationToString(selectedOptions));
           },
         ),
         TextButton(
@@ -117,7 +106,43 @@ class _MainViewState extends State<MainView> {
           },
           child: Text('Check Solution'),
         ),
+
+        BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
+          builder: (context, state) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 20,
+              children: [
+                Column(
+                  children: state.attemptedSolutions.map((solution) {
+                    return Text(equationToString(solution));
+                  }).toList(),
+                ),
+                Column(
+                  children: state.correctSolutions.map((solution) {
+                    return Text(
+                      equationToString(solution),
+                      style: const TextStyle(color: Colors.green),
+                    );
+                  }).toList(),
+                ),
+              ],
+            );
+          },
+        ),
       ],
     );
+  }
+
+  String equationToString(List<NumberWithSymbol> equation) {
+    String concat = '';
+    for (int i = 0; i < equation.length; i++) {
+      if (i > 0) {
+        concat += ' ${equation[i].symbol} ';
+      }
+      concat += equation[i].number.toString();
+    }
+
+    return concat;
   }
 }

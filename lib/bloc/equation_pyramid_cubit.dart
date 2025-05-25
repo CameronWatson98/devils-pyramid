@@ -29,12 +29,18 @@ class EquationPyramidCubit extends Cubit<EquationPyramidState> {
   }
 
   void addSelection(NumberWithSymbol option) {
-    emit(state.copyWith(selectedOptions: state.selectedOptions..add(option)));
+    emit(
+      state.copyWith(
+        selectedOptions: List.from(state.selectedOptions)..add(option),
+      ),
+    );
   }
 
   void removeSelection(NumberWithSymbol option) {
     emit(
-      state.copyWith(selectedOptions: state.selectedOptions..remove(option)),
+      state.copyWith(
+        selectedOptions: List.from(state.selectedOptions)..remove(option),
+      ),
     );
   }
 
@@ -50,7 +56,7 @@ class EquationPyramidCubit extends Cubit<EquationPyramidState> {
       final solution = state.generator.isSolution(state.selectedOptions);
       emit(
         state.copyWith(
-          attemptedSolutions: state.attemptedSolutions
+          attemptedSolutions: Set.from(state.attemptedSolutions)
             ..add(state.selectedOptions),
         ),
       );
@@ -59,7 +65,7 @@ class EquationPyramidCubit extends Cubit<EquationPyramidState> {
         print('Correct solution!');
         emit(
           state.copyWith(
-            correctSolutions: state.correctSolutions
+            correctSolutions: Set.from(state.correctSolutions)
               ..add(state.selectedOptions),
           ),
         );
