@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:devils_pyramid/bloc/equation_pyramid_cubit.dart';
 import 'package:devils_pyramid/models/number_with_symbol.dart';
+import 'package:devils_pyramid/widgets/pyramid_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -56,35 +57,41 @@ class _MainViewState extends State<MainView> {
             return Text(state.toString());
           },
         ),
+
         BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
           builder: (context, state) {
             var options = state.options;
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 10,
-              children: options.map((option) {
-                return TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: state.selectedOptions.contains(option)
-                        ? Colors.blue
-                        : Colors.grey,
-                  ),
-                  onPressed: () {
-                    if (state.selectedOptions.contains(option)) {
-                      // If already selected, remove it
-                      BlocProvider.of<EquationPyramidCubit>(
-                        context,
-                      ).removeSelection(option);
-                    } else if (state.selectedOptions.length < 3) {
-                      // If not selected and less than 3 options, add it
-                      BlocProvider.of<EquationPyramidCubit>(
-                        context,
-                      ).addSelection(option);
-                    }
-                  },
-                  child: Text(option.symbol + option.number.toString()),
-                );
-              }).toList(),
+            return Column(
+              children: [
+                PyramidLayout(itemHeight: 100, options: options),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 10,
+                  children: options.map((option) {
+                    return TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: state.selectedOptions.contains(option)
+                            ? Colors.blue
+                            : Colors.grey,
+                      ),
+                      onPressed: () {
+                        if (state.selectedOptions.contains(option)) {
+                          // If already selected, remove it
+                          BlocProvider.of<EquationPyramidCubit>(
+                            context,
+                          ).removeSelection(option);
+                        } else if (state.selectedOptions.length < 3) {
+                          // If not selected and less than 3 options, add it
+                          BlocProvider.of<EquationPyramidCubit>(
+                            context,
+                          ).addSelection(option);
+                        }
+                      },
+                      child: Text(option.symbol + option.number.toString()),
+                    );
+                  }).toList(),
+                ),
+              ],
             );
           },
         ),
