@@ -16,6 +16,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData.dark(),
       home: Scaffold(
         body: BlocProvider(
           create: (context) => EquationPyramidCubit(),
@@ -57,42 +58,10 @@ class _MainViewState extends State<MainView> {
             return Text(state.toString());
           },
         ),
-
         BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
           builder: (context, state) {
             var options = state.options;
-            return Column(
-              children: [
-                PyramidLayout(itemHeight: 100, options: options),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 10,
-                  children: options.map((option) {
-                    return TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor: state.selectedOptions.contains(option)
-                            ? Colors.blue
-                            : Colors.grey,
-                      ),
-                      onPressed: () {
-                        if (state.selectedOptions.contains(option)) {
-                          // If already selected, remove it
-                          BlocProvider.of<EquationPyramidCubit>(
-                            context,
-                          ).removeSelection(option);
-                        } else if (state.selectedOptions.length < 3) {
-                          // If not selected and less than 3 options, add it
-                          BlocProvider.of<EquationPyramidCubit>(
-                            context,
-                          ).addSelection(option);
-                        }
-                      },
-                      child: Text(option.symbol + option.number.toString()),
-                    );
-                  }).toList(),
-                ),
-              ],
-            );
+            return PyramidLayout(itemHeight: 100, options: options);
           },
         ),
         BlocSelector<
