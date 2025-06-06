@@ -14,6 +14,7 @@ class HexagonButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
       builder: (context, state) {
+        var isSelected = state.selectedOptions.contains(option);
         return SizedBox(
           height: size,
           width: size,
@@ -25,7 +26,7 @@ class HexagonButton extends StatelessWidget {
             ),
             child: ElevatedButton(
               onPressed: () {
-                if (state.selectedOptions.contains(option)) {
+                if (isSelected) {
                   // If already selected, remove it
                   BlocProvider.of<EquationPyramidCubit>(
                     context,

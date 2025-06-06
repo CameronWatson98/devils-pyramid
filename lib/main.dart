@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:devils_pyramid/bloc/equation_pyramid_cubit.dart';
 import 'package:devils_pyramid/models/number_with_symbol.dart';
+import 'package:devils_pyramid/styles/theme.dart';
 import 'package:devils_pyramid/widgets/pyramid_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +17,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.dark(),
+      theme: darkTheme,
       home: Scaffold(
         body: BlocProvider(
           create: (context) => EquationPyramidCubit(),
