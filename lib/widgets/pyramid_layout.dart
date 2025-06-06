@@ -24,14 +24,14 @@ class PyramidLayout extends StatelessWidget {
         children: List.generate(
           4,
           (i) => Transform.translate(
-            offset: Offset(0, i * (sqrt(3) * itemHeight / 2)),
+            offset: Offset(0, i * (itemHeight - 10)),
             child: Row(
-              spacing: 14,
+              spacing: 4,
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
                 i + 1,
                 (i) => HexagonButton(
-                  height: itemHeight,
+                  size: itemHeight,
                   option: optionsRemaining.removeAt(0),
                 ),
               ),

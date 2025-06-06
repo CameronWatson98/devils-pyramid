@@ -3,6 +3,13 @@ class NumberWithSymbol {
   final String symbol;
   NumberWithSymbol(this.number, this.symbol);
 
+  static const Map<String, String> prettySymbols = {
+    '+': '+',
+    '-': '-',
+    'x': '×',
+    '/': '÷',
+  };
+
   @override
-  String toString() => '$symbol$number';
+  String toString() => '${prettySymbols[symbol]} $number';
 }
