@@ -12,6 +12,7 @@ ThemeData get darkTheme => ThemeData(
     onError: ThemeColors.text,
     surface: ThemeColors.surface,
     onSurface: ThemeColors.text,
+    surfaceDim: ThemeColors.text.withValues(alpha: 0.05),
   ),
 
   brightness: Brightness.dark,
