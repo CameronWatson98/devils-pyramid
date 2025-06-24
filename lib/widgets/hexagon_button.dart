@@ -1,6 +1,7 @@
 import 'package:devils_pyramid/bloc/equation_pyramid_cubit.dart';
 import 'package:devils_pyramid/models/number_with_symbol.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:polygon/polygon.dart';
 
@@ -15,30 +16,49 @@ class HexagonButton extends StatelessWidget {
     return BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
       builder: (context, state) {
         var isSelected = state.selectedOptions.contains(option);
+        final Color containerColour = isSelected
+            ? Theme.of(context).colorScheme.primary
+            : Theme.of(context).colorScheme.surface;
         return SizedBox(
           height: size,
           width: size,
           child: ClipPath.shape(
+            clipBehavior: Clip.antiAlias,
             shape: PolygonBorder(
               polygon: RegularConvexPolygon(vertexCount: 6),
               turn: 0.25,
               radius: 6,
             ),
-            child: ElevatedButton(
-              onPressed: () {
-                if (isSelected) {
-                  // If already selected, remove it
-                  BlocProvider.of<EquationPyramidCubit>(
-                    context,
-                  ).removeSelection(option);
-                } else if (state.selectedOptions.length < 3) {
-                  // If not selected and less than 3 options, add it
-                  BlocProvider.of<EquationPyramidCubit>(
-                    context,
-                  ).addSelection(option);
-                }
-              },
-              child: Text(option.toString()),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              color: containerColour,
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                  shadowColor: WidgetStateProperty.all(Colors.transparent),
+                  surfaceTintColor: WidgetStateProperty.all(Colors.transparent),
+                ),
+                onPressed: () {
+                  if (isSelected) {
+                    // If already selected, remove it
+                    BlocProvider.of<EquationPyramidCubit>(
+                      context,
+                    ).removeSelection(option);
+                  } else if (state.selectedOptions.length < 3) {
+                    // If not selected and less than 3 options, add it
+                    BlocProvider.of<EquationPyramidCubit>(
+                      context,
+                    ).addSelection(option);
+                  }
+                },
+                child: Text(
+                  option.toString(),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                ),
+              ),
             ),
           ),
         );
