@@ -52,67 +52,14 @@ class _MainViewState extends State<MainView> {
       mainAxisAlignment: MainAxisAlignment.center,
       spacing: 20,
       children: [
-        BlocSelector<EquationPyramidCubit, EquationPyramidState, int>(
-          selector: (state) {
-            return state.initialNumber;
-          },
-          builder: (context, initialNumber) {
+        BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
+          builder: (context, state) {
             return AnimatedSizeContainer(
               child: IntrinsicWidth(
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6),
                     color: Theme.of(context).colorScheme.surface,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 10,
-                            ),
-                            color: Theme.of(context).colorScheme.surfaceDim,
-                            child: Text('Target'),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            child: Text(initialNumber.toString()),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-        BlocSelector<
-          EquationPyramidCubit,
-          EquationPyramidState,
-          List<NumberWithSymbol>
-        >(
-          selector: (state) {
-            return state.selectedOptions;
-          },
-          builder: (context, selectedOptions) {
-            return AnimatedSizeContainer(
-              child: IntrinsicWidth(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    color: Theme.of(context).colorScheme.surfaceDim,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -128,20 +75,23 @@ class _MainViewState extends State<MainView> {
                                 vertical: 10,
                               ),
                               color: Theme.of(context).colorScheme.surfaceDim,
-                              child: Center(child: Text('Solution')),
+                              child: Center(child: Text('Target')),
                             ),
                           ),
                         ],
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            child: Text(equationToString(selectedOptions)),
-                          ),
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Row(
+                          spacing: 10,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            if (state.selectedOptions.isNotEmpty)
+                              Text(equationToString(state.selectedOptions)),
+                            Text(state.initialNumber.toString()),
+                          ],
+                        ),
                       ),
                     ],
                   ),

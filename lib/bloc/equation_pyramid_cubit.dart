@@ -50,7 +50,6 @@ class EquationPyramidCubit extends Cubit<EquationPyramidState> {
 
   void checkSolution() {
     if (state.attemptedSolutions.contains(state.selectedOptions)) {
-      // Already attempted this solution
       print('Already attempted this solution: ${state.selectedOptions}');
     } else {
       final solution = state.generator.isSolution(state.selectedOptions);
