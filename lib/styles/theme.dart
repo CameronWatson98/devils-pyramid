@@ -14,7 +14,7 @@ ThemeData get darkTheme => ThemeData(
     onSurface: ThemeColors.text,
     surfaceDim: ThemeColors.text.withValues(alpha: 0.05),
   ),
-
+  fontFamily: 'Lexend',
   brightness: Brightness.dark,
   scaffoldBackgroundColor: ThemeColors.background,
 );

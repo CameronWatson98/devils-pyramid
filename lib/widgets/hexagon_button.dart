@@ -1,7 +1,6 @@
 import 'package:devils_pyramid/bloc/equation_pyramid_cubit.dart';
 import 'package:devils_pyramid/models/number_with_symbol.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:polygon/polygon.dart';
 
@@ -54,8 +53,12 @@ class HexagonButton extends StatelessWidget {
                 },
                 child: Text(
                   option.toString(),
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimary,
+                  style: TextStyle().copyWith(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 20,
+                    color: isSelected
+                        ? Theme.of(context).colorScheme.surface
+                        : Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),

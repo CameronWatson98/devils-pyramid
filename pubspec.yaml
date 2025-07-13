@@ -12,7 +12,6 @@ dependencies:
   bloc: ^9.0.0
   flutter_bloc: ^9.1.1
   polygon: ^0.1.0
-  google_fonts: ^6.2.1
   flutter_animate: ^4.5.2
 
 dev_dependencies:
@@ -22,3 +21,28 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - lib/fonts/
+
+  fonts:
+    - family: Lexend
+      fonts:
+        - asset: lib/fonts/Lexend-Thin.ttf
+          weight: 100
+        - asset: lib/fonts/Lexend-ExtraLight.ttf
+          weight: 200
+        - asset: lib/fonts/Lexend-Light.ttf
+          weight: 300
+        - asset: lib/fonts/Lexend-Regular.ttf
+          weight: 400
+        - asset: lib/fonts/Lexend-Medium.ttf
+          weight: 500
+        - asset: lib/fonts/Lexend-SemiBold.ttf
+          weight: 600
+        - asset: lib/fonts/Lexend-Bold.ttf
+          weight: 700
+        - asset: lib/fonts/Lexend-ExtraBold.ttf
+          weight: 800
+        - asset: lib/fonts/Lexend-Black.ttf
+          weight: 900

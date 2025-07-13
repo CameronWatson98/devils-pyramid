@@ -5,6 +5,7 @@ import 'package:devils_pyramid/models/number_with_symbol.dart';
 import 'package:devils_pyramid/styles/theme.dart';
 import 'package:devils_pyramid/widgets/animated_size_container.dart';
 import 'package:devils_pyramid/widgets/pyramid_layout.dart';
+import 'package:devils_pyramid/widgets/rounded_text_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -50,7 +51,7 @@ class _MainViewState extends State<MainView> {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      spacing: 20,
+      spacing: 40,
       children: [
         BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
           builder: (context, state) {
@@ -75,7 +76,13 @@ class _MainViewState extends State<MainView> {
                                 vertical: 10,
                               ),
                               color: Theme.of(context).colorScheme.surfaceDim,
-                              child: Center(child: Text('Target')),
+                              child: Center(
+                                child: Text(
+                                  'Target',
+                                  style: Theme.of(context).textTheme.bodyLarge!
+                                      .copyWith(fontWeight: FontWeight.w600),
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -88,8 +95,14 @@ class _MainViewState extends State<MainView> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             if (state.selectedOptions.isNotEmpty)
-                              Text(equationToString(state.selectedOptions)),
-                            Text(state.initialNumber.toString()),
+                              Text(
+                                equationToString(state.selectedOptions),
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            Text(
+                              state.initialNumber.toString(),
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
                           ],
                         ),
                       ),
@@ -106,14 +119,60 @@ class _MainViewState extends State<MainView> {
             return PyramidLayout(itemHeight: 100, options: options);
           },
         ),
-
-        TextButton(
-          onPressed: () {
-            BlocProvider.of<EquationPyramidCubit>(context).checkSolution();
-          },
-          child: Text('Check Solution'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 20,
+          children: [
+            RoundedTextButton(
+              text: 'Shuffle',
+              onPressed: () {
+                BlocProvider.of<EquationPyramidCubit>(context).shuffleOptions();
+              },
+            ),
+            BlocSelector<
+              EquationPyramidCubit,
+              EquationPyramidState,
+              List<NumberWithSymbol>
+            >(
+              selector: (state) {
+                return state.selectedOptions;
+              },
+              builder: (context, selectedOptions) {
+                return RoundedTextButton(
+                  text: 'Deselect All',
+                  onPressed: selectedOptions.isNotEmpty
+                      ? () {
+                          BlocProvider.of<EquationPyramidCubit>(
+                            context,
+                          ).resetSelections();
+                        }
+                      : null,
+                );
+              },
+            ),
+            BlocSelector<
+              EquationPyramidCubit,
+              EquationPyramidState,
+              List<NumberWithSymbol>
+            >(
+              selector: (state) {
+                return state.selectedOptions;
+              },
+              builder: (context, selectedOptions) {
+                return RoundedTextButton(
+                  text: 'Submit',
+                  onPressed: selectedOptions.length == 3
+                      ? () {
+                          BlocProvider.of<EquationPyramidCubit>(
+                            context,
+                          ).checkSolution();
+                        }
+                      : null,
+                );
+              },
+            ),
+          ],
         ),
-
         BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
           builder: (context, state) {
             return Row(

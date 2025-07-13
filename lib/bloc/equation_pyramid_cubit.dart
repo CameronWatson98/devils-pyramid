@@ -48,6 +48,11 @@ class EquationPyramidCubit extends Cubit<EquationPyramidState> {
     emit(state.copyWith(selectedOptions: []));
   }
 
+  void shuffleOptions() {
+    final shuffledOptions = List.of(state.options)..shuffle();
+    emit(state.copyWith(options: shuffledOptions));
+  }
+
   void checkSolution() {
     if (state.attemptedSolutions.contains(state.selectedOptions)) {
       print('Already attempted this solution: ${state.selectedOptions}');
