@@ -4,9 +4,12 @@ import 'package:devils_pyramid/bloc/equation_pyramid_cubit.dart';
 import 'package:devils_pyramid/config/feature_flags.dart';
 import 'package:devils_pyramid/models/number_with_symbol.dart';
 import 'package:devils_pyramid/widgets/animated_size_container.dart';
+import 'package:devils_pyramid/widgets/live_calculation.dart';
 import 'package:devils_pyramid/widgets/pyramid_layout.dart';
 import 'package:devils_pyramid/widgets/rounded_text_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GamePage extends StatefulWidget {
@@ -93,19 +96,21 @@ class _GamePageState extends State<GamePage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.all(20),
-                              child: Row(
-                                spacing: 10,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.max,
+                              child: Column(
                                 children: [
-                                  if (state.selectedOptions.isNotEmpty)
-                                    Text(
-                                      equationToString(state.selectedOptions),
-                                      style: Theme.of(context).textTheme.bodyLarge,
-                                    ),
+                                  // Target number
                                   Text(
-                                    state.initialNumber.toString(),
-                                    style: Theme.of(context).textTheme.bodyLarge,
+                                    'Target: ${state.initialNumber}',
+                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                                        ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  // Live calculation display
+                                  LiveCalculation(
+                                    selectedOptions: state.selectedOptions,
+                                    targetNumber: state.initialNumber,
                                   ),
                                 ],
                               ),

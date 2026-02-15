@@ -1,6 +1,8 @@
 import 'package:devils_pyramid/bloc/equation_pyramid_cubit.dart';
 import 'package:devils_pyramid/models/number_with_symbol.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:polygon/polygon.dart';
 
@@ -39,6 +41,9 @@ class HexagonButton extends StatelessWidget {
                   surfaceTintColor: WidgetStateProperty.all(Colors.transparent),
                 ),
                 onPressed: () {
+                  // Haptic feedback on tap
+                  HapticFeedback.lightImpact();
+
                   if (isSelected) {
                     // If already selected, remove it
                     BlocProvider.of<EquationPyramidCubit>(
@@ -64,7 +69,22 @@ class HexagonButton extends StatelessWidget {
               ),
             ),
           ),
-        );
+        )
+            .animate(
+              key: ValueKey(isSelected),
+            )
+            .scale(
+              duration: 200.ms,
+              begin: const Offset(1.0, 1.0),
+              end: const Offset(1.1, 1.1),
+              curve: Curves.easeOutBack,
+            )
+            .then()
+            .scale(
+              duration: 150.ms,
+              begin: const Offset(1.1, 1.1),
+              end: const Offset(1.0, 1.0),
+            );
       },
     );
   }

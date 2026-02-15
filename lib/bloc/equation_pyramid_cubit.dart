@@ -6,6 +6,7 @@ import 'package:devils_pyramid/models/number_with_symbol.dart';
 import 'package:devils_pyramid/services/daily_challenge_storage.dart';
 import 'package:devils_pyramid/services/equation_generator.dart';
 import 'package:devils_pyramid/utils/date_seed.dart';
+import 'package:flutter/services.dart';
 
 class EquationPyramidCubit extends Cubit<EquationPyramidState> {
   final DailyChallengeStorage? _storage;
@@ -69,6 +70,8 @@ class EquationPyramidCubit extends Cubit<EquationPyramidState> {
       final newAttempts = state.totalAttempts + 1;
 
       if (solution) {
+        // Success haptic feedback
+        HapticFeedback.heavyImpact();
         print('Correct solution!');
         emit(
           state.copyWith(
@@ -81,6 +84,8 @@ class EquationPyramidCubit extends Cubit<EquationPyramidState> {
           ),
         );
       } else {
+        // Failure haptic feedback
+        HapticFeedback.mediumImpact();
         print('Incorrect solution: ${state.selectedOptions}');
         emit(
           state.copyWith(
