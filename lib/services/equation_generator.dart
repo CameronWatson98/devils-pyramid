@@ -8,14 +8,17 @@ class EquationGenerator {
   final int numSolutions;
   final int maxNumber;
   final List<String> symbols = ['+', '-', 'x', '/'];
-  final Random rand = Random();
+  late final Random rand;
 
   EquationGenerator(
     this.initialNumber, {
     this.numOptions = 10,
     this.numSolutions = 1,
     this.maxNumber = 20,
-  });
+    int? seed,
+  }) {
+    rand = seed != null ? Random(seed) : Random();
+  }
 
   List<NumberWithSymbol> generate() {
     // Ensure at least one of each symbol
