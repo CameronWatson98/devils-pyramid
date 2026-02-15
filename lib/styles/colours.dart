@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class ThemeColors {
-  static const background = Color(0XFFFEFEFE);
-  static const primary = Color(0XFF6FD08C);
-  static const secondary = Color(0XFFFF634A);
-  static const surface = Color(0XFFF4F4F6);
-  static const text = Color(0XFF3F4245);
-  static const error = Color(0XFFE03D46);
+  static const background = Color(0XFFFAFAFA);
+  static const primary = Color(0XFFDC4405);
+  static const secondary = Color(0XFF1A1A1A);
+  static const surface = Color(0XFFE7E7E7);
+  static const onPrimary = Colors.white;
+  static const onSecondary = Colors.white;
+  static const onSurface = Color(0XFF1A1A1A);
+  static const error = Color(0XFFD32F2F);
 }
