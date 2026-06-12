@@ -3,13 +3,11 @@ import 'dart:math';
 import 'package:devils_pyramid/bloc/equation_pyramid_cubit.dart';
 import 'package:devils_pyramid/config/feature_flags.dart';
 import 'package:devils_pyramid/models/number_with_symbol.dart';
-import 'package:devils_pyramid/widgets/animated_size_container.dart';
 import 'package:devils_pyramid/widgets/live_calculation.dart';
+import 'package:devils_pyramid/widgets/mistakes_indicator.dart';
 import 'package:devils_pyramid/widgets/pyramid_layout.dart';
 import 'package:devils_pyramid/widgets/rounded_text_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GamePage extends StatefulWidget {
@@ -40,16 +38,14 @@ class _GamePageState extends State<GamePage> {
 
   void _initializePlayMode() {
     context.read<EquationPyramidCubit>().createNewGame(
-          initialNumber: Random().nextInt(20) + 1,
-        );
+      initialNumber: Random().nextInt(20) + 1,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.isDaily ? 'Daily Challenge' : 'Play'),
-      ),
+      appBar: AppBar(title: Text(widget.isDaily ? 'Daily Challenge' : 'Play')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         spacing: 40,
@@ -59,51 +55,35 @@ class _GamePageState extends State<GamePage> {
               return Column(
                 spacing: 12,
                 children: [
-                  AnimatedSizeContainer(
-                    child: IntrinsicWidth(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          color: Theme.of(context).colorScheme.surface,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                      vertical: 10,
-                                    ),
-                                    color:
-                                        Theme.of(context).colorScheme.surfaceDim,
-                                    child: Center(
-                                      child: Text(
-                                        'Target',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .copyWith(fontWeight: FontWeight.w600),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Padding(
+                  IntrinsicWidth(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: Theme.of(context).colorScheme.surface,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Fixed height container to prevent layout jumping
+                          SizedBox(
+                            height: 140,
+                            child: Padding(
                               padding: const EdgeInsets.all(20),
                               child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   // Target number
                                   Text(
                                     'Target: ${state.initialNumber}',
-                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
                                           fontWeight: FontWeight.w600,
-                                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withValues(alpha: 0.7),
                                         ),
                                   ),
                                   const SizedBox(height: 12),
@@ -115,10 +95,16 @@ class _GamePageState extends State<GamePage> {
                                 ],
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
+                  ),
+                  // Mistakes indicator with animated circles
+                  MistakesIndicator(
+                    mistakesMade:
+                        state.totalAttempts - state.correctSolutions.length,
+                    maxMistakes: state.maxAttempts,
                   ),
                   // Show completion indicator for daily challenge
                   if (state.isDaily && state.correctSolutions.length >= 3)
@@ -138,6 +124,24 @@ class _GamePageState extends State<GamePage> {
                         textAlign: TextAlign.center,
                       ),
                     ),
+                  // Show game over message when out of attempts
+                  if (state.isGameOver)
+                    Container(
+                      padding: EdgeInsets.all(16),
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade700,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '❌ Game Over! You found ${state.correctSolutions.length}/3 solutions',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                 ],
               );
             },
@@ -145,7 +149,7 @@ class _GamePageState extends State<GamePage> {
           BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
             builder: (context, state) {
               var options = state.options;
-              return PyramidLayout(itemHeight: 100, options: options);
+              return PyramidLayout(options: options);
             },
           ),
           BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
@@ -160,12 +164,16 @@ class _GamePageState extends State<GamePage> {
                     RoundedTextButton(
                       text: 'Shuffle',
                       onPressed: () {
-                        BlocProvider.of<EquationPyramidCubit>(context)
-                            .shuffleOptions();
+                        BlocProvider.of<EquationPyramidCubit>(
+                          context,
+                        ).shuffleOptions();
                       },
                     ),
-                  BlocSelector<EquationPyramidCubit, EquationPyramidState,
-                      List<NumberWithSymbol>>(
+                  BlocSelector<
+                    EquationPyramidCubit,
+                    EquationPyramidState,
+                    List<NumberWithSymbol>
+                  >(
                     selector: (state) {
                       return state.selectedOptions;
                     },
@@ -182,15 +190,14 @@ class _GamePageState extends State<GamePage> {
                       );
                     },
                   ),
-                  BlocSelector<EquationPyramidCubit, EquationPyramidState,
-                      List<NumberWithSymbol>>(
-                    selector: (state) {
-                      return state.selectedOptions;
-                    },
-                    builder: (context, selectedOptions) {
+                  BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
+                    builder: (context, state) {
+                      final canSubmit =
+                          state.selectedOptions.length == 3 &&
+                          !state.isGameOver;
                       return RoundedTextButton(
                         text: 'Submit',
-                        onPressed: selectedOptions.length == 3
+                        onPressed: canSubmit
                             ? () {
                                 BlocProvider.of<EquationPyramidCubit>(
                                   context,
@@ -199,29 +206,6 @@ class _GamePageState extends State<GamePage> {
                             : null,
                       );
                     },
-                  ),
-                ],
-              );
-            },
-          ),
-          BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
-            builder: (context, state) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 20,
-                children: [
-                  Column(
-                    children: state.attemptedSolutions.map((solution) {
-                      return Text(equationToString(solution));
-                    }).toList(),
-                  ),
-                  Column(
-                    children: state.correctSolutions.map((solution) {
-                      return Text(
-                        equationToString(solution),
-                        style: const TextStyle(color: Colors.green),
-                      );
-                    }).toList(),
                   ),
                 ],
               );
