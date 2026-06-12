@@ -60,7 +60,7 @@ class HexagonButton extends StatelessWidget {
                   option.toString(),
                   style: TextStyle().copyWith(
                     fontWeight: FontWeight.w500,
-                    fontSize: 20,
+                    fontSize: size * 0.20,
                     color: isSelected
                         ? Theme.of(context).colorScheme.surface
                         : Theme.of(context).colorScheme.onSurface,
