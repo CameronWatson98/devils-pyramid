@@ -13,7 +13,7 @@ class RoundedTextButton extends StatelessWidget {
         foregroundColor: onPressed == null
             ? Theme.of(context).colorScheme.surfaceDim
             : Theme.of(context).colorScheme.onSurface,
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
         shape: RoundedRectangleBorder(
           side: BorderSide(
             width: 2,

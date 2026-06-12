@@ -167,16 +167,18 @@ class _GamePageState extends State<GamePage> {
 
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          spacing: 40,
+                          spacing: 10,
                           children: [
                             if (featureFlags.shuffleEnabled)
-                              RoundedTextButton(
-                                text: 'Shuffle',
-                                onPressed: () {
-                                  BlocProvider.of<EquationPyramidCubit>(
-                                    context,
-                                  ).shuffleOptions();
-                                },
+                              Expanded(
+                                child: RoundedTextButton(
+                                  text: 'Shuffle',
+                                  onPressed: () {
+                                    BlocProvider.of<EquationPyramidCubit>(
+                                      context,
+                                    ).shuffleOptions();
+                                  },
+                                ),
                               ),
                             BlocSelector<
                               EquationPyramidCubit,
@@ -185,15 +187,17 @@ class _GamePageState extends State<GamePage> {
                             >(
                               selector: (state) => state.selectedOptions,
                               builder: (context, selectedOptions) {
-                                return RoundedTextButton(
-                                  text: 'Deselect All',
-                                  onPressed: selectedOptions.isNotEmpty
-                                      ? () =>
-                                            BlocProvider.of<
-                                                  EquationPyramidCubit
-                                                >(context)
-                                                .resetSelections()
-                                      : null,
+                                return Expanded(
+                                  child: RoundedTextButton(
+                                    text: 'Deselect All',
+                                    onPressed: selectedOptions.isNotEmpty
+                                        ? () =>
+                                              BlocProvider.of<
+                                                    EquationPyramidCubit
+                                                  >(context)
+                                                  .resetSelections()
+                                        : null,
+                                  ),
                                 );
                               },
                             ),
@@ -205,15 +209,17 @@ class _GamePageState extends State<GamePage> {
                                 final canSubmit =
                                     state.selectedOptions.length == 3 &&
                                     !state.isGameOver;
-                                return RoundedTextButton(
-                                  text: 'Submit',
-                                  onPressed: canSubmit
-                                      ? () =>
-                                            BlocProvider.of<
-                                                  EquationPyramidCubit
-                                                >(context)
-                                                .checkSolution()
-                                      : null,
+                                return Expanded(
+                                  child: RoundedTextButton(
+                                    text: 'Submit',
+                                    onPressed: canSubmit
+                                        ? () =>
+                                              BlocProvider.of<
+                                                    EquationPyramidCubit
+                                                  >(context)
+                                                  .checkSolution()
+                                        : null,
+                                  ),
                                 );
                               },
                             ),
