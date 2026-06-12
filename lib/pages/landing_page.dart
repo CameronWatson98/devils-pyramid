@@ -18,10 +18,11 @@ class LandingPage extends StatelessWidget {
           children: [
             Text(
               'Devil\'s Pyramid',
+              textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                    color: ThemeColors.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
+                color: ThemeColors.primary,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 20),
             Column(
