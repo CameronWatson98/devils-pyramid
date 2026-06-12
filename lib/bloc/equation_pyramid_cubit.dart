@@ -12,8 +12,8 @@ class EquationPyramidCubit extends Cubit<EquationPyramidState> {
   final DailyChallengeStorage? _storage;
 
   EquationPyramidCubit({DailyChallengeStorage? storage})
-      : _storage = storage,
-        super(EquationPyramidState(generator: EquationGenerator(-1)));
+    : _storage = storage,
+      super(EquationPyramidState(generator: EquationGenerator(-1)));
 
   void createNewGame({
     required int initialNumber,
@@ -114,14 +114,14 @@ class EquationPyramidCubit extends Cubit<EquationPyramidState> {
     final todayStr = formatDateKey(today);
 
     // Try loading saved challenge
-    final saved = await _storage!.loadDailyChallenge();
+    final saved = await _storage.loadDailyChallenge();
 
     if (saved != null && saved.date == todayStr) {
       // Resume today's challenge
       _resumeDailyChallenge(saved);
     } else {
       // Clear old challenge and create new one
-      await _storage!.clearOldChallenges(todayStr);
+      await _storage.clearOldChallenges(todayStr);
       await _createNewDailyChallenge(today, todayStr);
     }
   }
@@ -131,29 +131,33 @@ class EquationPyramidCubit extends Cubit<EquationPyramidState> {
     final generator = EquationGenerator(
       data.initialNumber,
       seed: data.seed,
+      numSolutions: 3,
     );
 
-    emit(EquationPyramidState(
-      generator: generator,
-      initialNumber: data.initialNumber,
-      options: generator.generate(),
-      correctSolutions: Set.from(data.correctSolutions),
-      attemptedSolutions: Set.from(data.attemptedSolutions),
-      totalAttempts: data.totalAttempts,
-      isDaily: true,
-      dailyChallengeDate: data.date,
-    ));
+    emit(
+      EquationPyramidState(
+        generator: generator,
+        initialNumber: data.initialNumber,
+        options: generator.generate(),
+        correctSolutions: Set.from(data.correctSolutions),
+        attemptedSolutions: Set.from(data.attemptedSolutions),
+        totalAttempts: data.totalAttempts,
+        isDaily: true,
+        dailyChallengeDate: data.date,
+      ),
+    );
   }
 
-  Future<void> _createNewDailyChallenge(
-    DateTime today,
-    String todayStr,
-  ) async {
+  Future<void> _createNewDailyChallenge(DateTime today, String todayStr) async {
     final seed = generateDailySeed(today);
     final seededRandom = Random(seed);
     final initialNumber = seededRandom.nextInt(20) + 1;
 
-    final generator = EquationGenerator(initialNumber, seed: seed);
+    final generator = EquationGenerator(
+      initialNumber,
+      seed: seed,
+      numSolutions: 3,
+    );
     final options = generator.generate();
 
     // Save initial state
@@ -168,13 +172,15 @@ class EquationPyramidCubit extends Cubit<EquationPyramidState> {
 
     await _storage!.saveDailyChallenge(data);
 
-    emit(EquationPyramidState(
-      generator: generator,
-      initialNumber: initialNumber,
-      options: options,
-      isDaily: true,
-      dailyChallengeDate: todayStr,
-    ));
+    emit(
+      EquationPyramidState(
+        generator: generator,
+        initialNumber: initialNumber,
+        options: options,
+        isDaily: true,
+        dailyChallengeDate: todayStr,
+      ),
+    );
   }
 
   /// Save progress after each attempt
@@ -190,7 +196,7 @@ class EquationPyramidCubit extends Cubit<EquationPyramidState> {
       totalAttempts: state.totalAttempts,
     );
 
-    await _storage!.saveDailyChallenge(data);
+    await _storage.saveDailyChallenge(data);
   }
 }
 
@@ -204,6 +210,7 @@ class EquationPyramidState {
   final bool isDaily;
   final String? dailyChallengeDate;
   final int totalAttempts;
+  final int maxAttempts;
 
   EquationPyramidState({
     required this.generator,
@@ -215,7 +222,12 @@ class EquationPyramidState {
     this.isDaily = false,
     this.dailyChallengeDate,
     this.totalAttempts = 0,
+    this.maxAttempts = 4,
   });
+
+  /// Check if the player has run out of attempts
+  bool get isGameOver =>
+      totalAttempts >= maxAttempts && correctSolutions.length < 3;
 
   copyWith({
     EquationGenerator? generator,
@@ -227,6 +239,7 @@ class EquationPyramidState {
     bool? isDaily,
     String? dailyChallengeDate,
     int? totalAttempts,
+    int? maxAttempts,
   }) {
     return EquationPyramidState(
       generator: generator ?? this.generator,
@@ -238,6 +251,7 @@ class EquationPyramidState {
       isDaily: isDaily ?? this.isDaily,
       dailyChallengeDate: dailyChallengeDate ?? this.dailyChallengeDate,
       totalAttempts: totalAttempts ?? this.totalAttempts,
+      maxAttempts: maxAttempts ?? this.maxAttempts,
     );
   }
 }
