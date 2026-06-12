@@ -24,11 +24,14 @@ class EquationGenerator {
     // Ensure at least one of each symbol
     List<NumberWithSymbol> options = [];
     for (var symbol in symbols) {
-      options.add(NumberWithSymbol(_randomNumber(), symbol));
+      final number = _getNumberForSymbol(symbol);
+      options.add(NumberWithSymbol(number, symbol));
     }
     // Fill the rest randomly
     while (options.length < numOptions) {
-      options.add(NumberWithSymbol(_randomNumber(), symbols[rand.nextInt(4)]));
+      final symbol = symbols[rand.nextInt(4)];
+      final number = _getNumberForSymbol(symbol);
+      options.add(NumberWithSymbol(number, symbol));
     }
     // Shuffle to randomize order
     options.shuffle();
@@ -53,7 +56,7 @@ class EquationGenerator {
         if (solution.length == 2 && usedSymbols.length < 3) {
           symbol = symbols.firstWhere((s) => !usedSymbols.contains(s));
         }
-        int number = _randomNumber();
+        int number = _getNumberForSymbol(symbol);
         solution.add(NumberWithSymbol(number, symbol));
         usedSymbols.add(symbol);
       }
@@ -139,5 +142,30 @@ class EquationGenerator {
     return result == initialNumber;
   }
 
-  int _randomNumber() => rand.nextInt(maxNumber) + 1;
+  /// Get appropriate number range based on the operation symbol
+  int _getNumberForSymbol(String symbol) {
+    switch (symbol) {
+      case '/':
+        return _randomDivisor();
+      case 'x':
+        return _randomMultiplier();
+      case '+':
+      case '-':
+        return _randomAddSubNumber();
+      default:
+        return _randomNumber();
+    }
+  }
+
+  /// Full range for starting numbers
+  int _randomNumber() => rand.nextInt(maxNumber) + 1; // Returns 1-20
+
+  /// Smaller divisors (2-10) for practical division operations
+  int _randomDivisor() => rand.nextInt(9) + 2; // Returns 2-10
+
+  /// Smaller multipliers (2-6) to prevent number explosion
+  int _randomMultiplier() => rand.nextInt(5) + 2; // Returns 2-6
+
+  /// Mid-range numbers (1-15) for addition/subtraction balance
+  int _randomAddSubNumber() => rand.nextInt(15) + 1; // Returns 1-15
 }
