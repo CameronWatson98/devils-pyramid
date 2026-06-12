@@ -46,172 +46,187 @@ class _GamePageState extends State<GamePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.isDaily ? 'Daily Challenge' : 'Play')),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        spacing: 40,
-        children: [
-          BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
-            builder: (context, state) {
-              return Column(
-                spacing: 12,
-                children: [
-                  IntrinsicWidth(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        color: Theme.of(context).colorScheme.surface,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Fixed height container to prevent layout jumping
-                          SizedBox(
-                            height: 140,
-                            child: Padding(
-                              padding: const EdgeInsets.all(20),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  // Target number
-                                  Text(
-                                    'Target: ${state.initialNumber}',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.w600,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface
-                                              .withValues(alpha: 0.7),
-                                        ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  // Live calculation display
-                                  LiveCalculation(
-                                    selectedOptions: state.selectedOptions,
-                                    targetNumber: state.initialNumber,
-                                  ),
-                                ],
-                              ),
-                            ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            spacing: 40,
+            children: [
+              BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
+                builder: (context, state) {
+                  return Column(
+                    spacing: 12,
+                    children: [
+                      IntrinsicWidth(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: Theme.of(context).colorScheme.surface,
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // Mistakes indicator with animated circles
-                  MistakesIndicator(
-                    mistakesMade:
-                        state.totalAttempts - state.correctSolutions.length,
-                    maxMistakes: state.maxAttempts,
-                  ),
-                  // Show completion indicator for daily challenge
-                  if (state.isDaily && state.correctSolutions.length >= 3)
-                    Container(
-                      padding: EdgeInsets.all(16),
-                      margin: EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        '🎉 Daily Challenge Complete! ${state.correctSolutions.length}/3 solutions found in ${state.totalAttempts} attempts',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // Fixed height container to prevent layout jumping
+                              SizedBox(
+                                height: 140,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      // Target number
+                                      Text(
+                                        'Target: ${state.initialNumber}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface
+                                                  .withValues(alpha: 0.7),
+                                            ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      // Live calculation display
+                                      LiveCalculation(
+                                        selectedOptions: state.selectedOptions,
+                                        targetNumber: state.initialNumber,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        textAlign: TextAlign.center,
                       ),
-                    ),
-                  // Show game over message when out of attempts
-                  if (state.isGameOver)
-                    Container(
-                      padding: EdgeInsets.all(16),
-                      margin: EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade700,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        '❌ Game Over! You found ${state.correctSolutions.length}/3 solutions',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                      // Show completion indicator for daily challenge
+                      if (state.isDaily && state.correctSolutions.length >= 3)
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          margin: EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '🎉 Daily Challenge Complete! ${state.correctSolutions.length}/3 solutions found in ${state.totalAttempts} attempts',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                ],
-              );
-            },
-          ),
-          BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
-            builder: (context, state) {
-              var options = state.options;
-              return PyramidLayout(options: options);
-            },
-          ),
-          BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
-            builder: (context, state) {
-              final featureFlags = FeatureFlags.instance;
+                      // Show game over message when out of attempts
+                      if (state.isGameOver)
+                        Container(
+                          padding: EdgeInsets.all(16),
+                          margin: EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade700,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '❌ Game Over! You found ${state.correctSolutions.length}/3 solutions',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
+              Expanded(
+                child: BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
+                  builder: (context, state) =>
+                      PyramidLayout(options: state.options),
+                ),
+              ),
 
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 20,
-                children: [
-                  if (featureFlags.shuffleEnabled)
-                    RoundedTextButton(
-                      text: 'Shuffle',
-                      onPressed: () {
-                        BlocProvider.of<EquationPyramidCubit>(
-                          context,
-                        ).shuffleOptions();
+              Expanded(
+                child: Column(
+                  spacing: 20,
+                  children: [
+                    BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
+                      builder: (context, state) => MistakesIndicator(
+                        mistakesMade:
+                            state.totalAttempts - state.correctSolutions.length,
+                        maxMistakes: state.maxAttempts,
+                      ),
+                    ),
+
+                    BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
+                      builder: (context, state) {
+                        final featureFlags = FeatureFlags.instance;
+
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          spacing: 40,
+                          children: [
+                            if (featureFlags.shuffleEnabled)
+                              RoundedTextButton(
+                                text: 'Shuffle',
+                                onPressed: () {
+                                  BlocProvider.of<EquationPyramidCubit>(
+                                    context,
+                                  ).shuffleOptions();
+                                },
+                              ),
+                            BlocSelector<
+                              EquationPyramidCubit,
+                              EquationPyramidState,
+                              List<NumberWithSymbol>
+                            >(
+                              selector: (state) => state.selectedOptions,
+                              builder: (context, selectedOptions) {
+                                return RoundedTextButton(
+                                  text: 'Deselect All',
+                                  onPressed: selectedOptions.isNotEmpty
+                                      ? () =>
+                                            BlocProvider.of<
+                                                  EquationPyramidCubit
+                                                >(context)
+                                                .resetSelections()
+                                      : null,
+                                );
+                              },
+                            ),
+                            BlocBuilder<
+                              EquationPyramidCubit,
+                              EquationPyramidState
+                            >(
+                              builder: (context, state) {
+                                final canSubmit =
+                                    state.selectedOptions.length == 3 &&
+                                    !state.isGameOver;
+                                return RoundedTextButton(
+                                  text: 'Submit',
+                                  onPressed: canSubmit
+                                      ? () =>
+                                            BlocProvider.of<
+                                                  EquationPyramidCubit
+                                                >(context)
+                                                .checkSolution()
+                                      : null,
+                                );
+                              },
+                            ),
+                          ],
+                        );
                       },
                     ),
-                  BlocSelector<
-                    EquationPyramidCubit,
-                    EquationPyramidState,
-                    List<NumberWithSymbol>
-                  >(
-                    selector: (state) {
-                      return state.selectedOptions;
-                    },
-                    builder: (context, selectedOptions) {
-                      return RoundedTextButton(
-                        text: 'Deselect All',
-                        onPressed: selectedOptions.isNotEmpty
-                            ? () {
-                                BlocProvider.of<EquationPyramidCubit>(
-                                  context,
-                                ).resetSelections();
-                              }
-                            : null,
-                      );
-                    },
-                  ),
-                  BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
-                    builder: (context, state) {
-                      final canSubmit =
-                          state.selectedOptions.length == 3 &&
-                          !state.isGameOver;
-                      return RoundedTextButton(
-                        text: 'Submit',
-                        onPressed: canSubmit
-                            ? () {
-                                BlocProvider.of<EquationPyramidCubit>(
-                                  context,
-                                ).checkSolution();
-                              }
-                            : null,
-                      );
-                    },
-                  ),
-                ],
-              );
-            },
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

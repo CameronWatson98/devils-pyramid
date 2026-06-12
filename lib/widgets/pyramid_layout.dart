@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:devils_pyramid/models/number_with_symbol.dart';
 import 'package:devils_pyramid/widgets/hexagon_button.dart';
 import 'package:flutter/material.dart';
@@ -12,20 +14,31 @@ class PyramidLayout extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         const spacing = 4.0;
-        const horizontalPadding = 32.0;
-        // Bottom row has 4 hexagons — fit them within available width
-        final hexSize =
-            (constraints.maxWidth - horizontalPadding - (3 * spacing)) / 4;
-        final overlap = hexSize * 0.10;
+        const overlapRatio = 0.10;
+        const rows = 4;
+
+        // hexSize based on available width
+        final hexSizeByWidth = (constraints.maxWidth - (3 * spacing)) / rows;
+
+        // hexSize based on available height — layout height = hexSize * (rows - (rows-1)*overlapRatio)
+        final heightRatio = rows - (rows - 1) * overlapRatio; // = 3.7
+        final hexSizeByHeight = constraints.maxHeight.isFinite
+            ? constraints.maxHeight / heightRatio
+            : hexSizeByWidth;
+
+        final hexSize = min(hexSizeByWidth, hexSizeByHeight);
+        final overlap = hexSize * overlapRatio;
 
         var optionsRemaining = List.from(options);
 
         return Column(
           mainAxisSize: MainAxisSize.min,
-          children: List.generate(
-            4,
-            (rowIndex) => Transform.translate(
-              offset: Offset(0, -overlap * rowIndex),
+          children: List.generate(rows, (rowIndex) {
+            final isLastRow = rowIndex == rows - 1;
+            // Each row's layout height = hexSize - overlap, except the last.
+            // Rows visually paint into the next row's space creating the overlap effect.
+            return SizedBox(
+              height: isLastRow ? hexSize : hexSize - overlap,
               child: Row(
                 spacing: spacing,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -37,8 +50,8 @@ class PyramidLayout extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
-          ),
+            );
+          }),
         );
       },
     );
