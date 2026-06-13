@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:devils_pyramid/bloc/equation_pyramid_cubit.dart';
 import 'package:devils_pyramid/config/feature_flags.dart';
 import 'package:devils_pyramid/models/number_with_symbol.dart';
+import 'package:devils_pyramid/widgets/animated_size_container.dart';
 import 'package:devils_pyramid/widgets/live_calculation.dart';
 import 'package:devils_pyramid/widgets/mistakes_indicator.dart';
 import 'package:devils_pyramid/widgets/pyramid_layout.dart';
@@ -50,7 +51,7 @@ class _GamePageState extends State<GamePage> {
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
-            spacing: 40,
+            spacing: 20,
             children: [
               BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
                 builder: (context, state) {
@@ -66,9 +67,7 @@ class _GamePageState extends State<GamePage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              // Fixed height container to prevent layout jumping
-                              SizedBox(
-                                height: 140,
+                              AnimatedSizeContainer(
                                 child: Padding(
                                   padding: const EdgeInsets.all(20),
                                   child: Column(
@@ -88,7 +87,6 @@ class _GamePageState extends State<GamePage> {
                                                   .withValues(alpha: 0.7),
                                             ),
                                       ),
-                                      const SizedBox(height: 12),
                                       // Live calculation display
                                       LiveCalculation(
                                         selectedOptions: state.selectedOptions,
@@ -149,86 +147,72 @@ class _GamePageState extends State<GamePage> {
                 ),
               ),
 
-              Expanded(
-                child: Column(
-                  spacing: 20,
-                  children: [
-                    BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
-                      builder: (context, state) => MistakesIndicator(
-                        mistakesMade:
-                            state.totalAttempts - state.correctSolutions.length,
-                        maxMistakes: state.maxAttempts,
-                      ),
-                    ),
-
-                    BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
-                      builder: (context, state) {
-                        final featureFlags = FeatureFlags.instance;
-
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          spacing: 10,
-                          children: [
-                            if (featureFlags.shuffleEnabled)
-                              Expanded(
-                                child: RoundedTextButton(
-                                  text: 'Shuffle',
-                                  onPressed: () {
-                                    BlocProvider.of<EquationPyramidCubit>(
-                                      context,
-                                    ).shuffleOptions();
-                                  },
-                                ),
-                              ),
-                            BlocSelector<
-                              EquationPyramidCubit,
-                              EquationPyramidState,
-                              List<NumberWithSymbol>
-                            >(
-                              selector: (state) => state.selectedOptions,
-                              builder: (context, selectedOptions) {
-                                return Expanded(
-                                  child: RoundedTextButton(
-                                    text: 'Deselect All',
-                                    onPressed: selectedOptions.isNotEmpty
-                                        ? () =>
-                                              BlocProvider.of<
-                                                    EquationPyramidCubit
-                                                  >(context)
-                                                  .resetSelections()
-                                        : null,
-                                  ),
-                                );
-                              },
-                            ),
-                            BlocBuilder<
-                              EquationPyramidCubit,
-                              EquationPyramidState
-                            >(
-                              builder: (context, state) {
-                                final canSubmit =
-                                    state.selectedOptions.length == 3 &&
-                                    !state.isGameOver;
-                                return Expanded(
-                                  child: RoundedTextButton(
-                                    text: 'Submit',
-                                    onPressed: canSubmit
-                                        ? () =>
-                                              BlocProvider.of<
-                                                    EquationPyramidCubit
-                                                  >(context)
-                                                  .checkSolution()
-                                        : null,
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ],
+              BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
+                builder: (context, state) => MistakesIndicator(
+                  mistakesMade:
+                      state.totalAttempts - state.correctSolutions.length,
+                  maxMistakes: state.maxAttempts,
                 ),
+              ),
+
+              BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
+                builder: (context, state) {
+                  final featureFlags = FeatureFlags.instance;
+
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 10,
+                    children: [
+                      if (featureFlags.shuffleEnabled)
+                        Expanded(
+                          child: RoundedTextButton(
+                            text: 'Shuffle',
+                            onPressed: () {
+                              BlocProvider.of<EquationPyramidCubit>(
+                                context,
+                              ).shuffleOptions();
+                            },
+                          ),
+                        ),
+                      BlocSelector<
+                        EquationPyramidCubit,
+                        EquationPyramidState,
+                        List<NumberWithSymbol>
+                      >(
+                        selector: (state) => state.selectedOptions,
+                        builder: (context, selectedOptions) {
+                          return Expanded(
+                            child: RoundedTextButton(
+                              text: 'Deselect All',
+                              onPressed: selectedOptions.isNotEmpty
+                                  ? () => BlocProvider.of<EquationPyramidCubit>(
+                                      context,
+                                    ).resetSelections()
+                                  : null,
+                            ),
+                          );
+                        },
+                      ),
+                      BlocBuilder<EquationPyramidCubit, EquationPyramidState>(
+                        builder: (context, state) {
+                          final canSubmit =
+                              state.selectedOptions.length == 3 &&
+                              !state.isGameOver;
+                          return Expanded(
+                            child: RoundedTextButton(
+                              text: 'Submit',
+                              onPressed: canSubmit
+                                  ? () => BlocProvider.of<EquationPyramidCubit>(
+                                      context,
+                                    ).checkSolution()
+                                  : null,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  );
+                },
               ),
             ],
           ),
