@@ -11,36 +11,43 @@ class LandingPage extends StatelessWidget {
     final featureFlags = FeatureFlags.instance;
 
     return Scaffold(
+      backgroundColor: ThemeColors.primaryWithAlpha,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 30,
+          spacing: 40,
           children: [
             Text(
               'Devil\'s Pyramid',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                color: ThemeColors.primary,
+                color: ThemeColors.onSurface,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 20),
             Column(
-              spacing: 16,
+              spacing: 10,
               children: [
                 if (featureFlags.dailyChallengeEnabled)
-                  RoundedTextButton(
-                    text: 'Daily Challenge',
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/daily');
-                    },
+                  SizedBox(
+                    width: 200,
+                    child: RoundedTextButton(
+                      inverted: true,
+                      text: 'Daily Challenge',
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/daily');
+                      },
+                    ),
                   ),
                 if (featureFlags.playModeEnabled)
-                  RoundedTextButton(
-                    text: 'Play',
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/play');
-                    },
+                  SizedBox(
+                    width: 200,
+                    child: RoundedTextButton(
+                      text: 'Play',
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/play');
+                      },
+                    ),
                   ),
               ],
             ),
