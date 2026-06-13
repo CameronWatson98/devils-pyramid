@@ -46,7 +46,19 @@ class _GamePageState extends State<GamePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.isDaily ? 'Daily Challenge' : 'Play')),
+      appBar: AppBar(
+        title: widget.isDaily
+            ? Row(
+                children: [
+                  const Text('Devil\'s Pyramid '),
+                  Text(
+                    _formatDate(DateTime.now()),
+                    style: const TextStyle(fontWeight: FontWeight.w300),
+                  ),
+                ],
+              )
+            : Text('Devil\'s Pyramid'),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -219,6 +231,24 @@ class _GamePageState extends State<GamePage> {
         ),
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
 
   String equationToString(List<NumberWithSymbol> equation) {
