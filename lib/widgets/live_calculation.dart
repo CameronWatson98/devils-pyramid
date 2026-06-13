@@ -66,7 +66,9 @@ class LiveCalculation extends StatelessWidget {
       final num = selectedOptions[i].number;
 
       // Add the operation
-      String prettySymbol = symbol == 'x' ? '×' : (symbol == '/' ? '÷' : symbol);
+      String prettySymbol = symbol == 'x'
+          ? '×'
+          : (symbol == '/' ? '÷' : symbol);
       equation += ' $prettySymbol $num';
 
       // Calculate new total
@@ -107,12 +109,12 @@ class LiveCalculation extends StatelessWidget {
       children: [
         // Equation string
         Text(
-          equationString,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
-          textAlign: TextAlign.center,
-        )
+              equationString,
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500),
+              textAlign: TextAlign.center,
+            )
             .animate()
             .fadeIn(duration: 200.ms)
             .slideY(begin: -0.3, end: 0, curve: Curves.easeOut),
@@ -125,12 +127,12 @@ class LiveCalculation extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '= $result',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    '= $result',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       color: _getResultColor(context, result),
                       fontWeight: FontWeight.bold,
                     ),
-              )
+                  )
                   .animate()
                   .fadeIn(duration: 300.ms)
                   .scale(
@@ -140,31 +142,6 @@ class LiveCalculation extends StatelessWidget {
                     curve: Curves.elasticOut,
                   ),
               const SizedBox(width: 12),
-              // Show arrow pointing to target
-              if (selectedOptions.length == 3)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      result == targetNumber ? Icons.check_circle : Icons.arrow_forward,
-                      color: _getResultColor(context, result),
-                      size: 20,
-                    )
-                        .animate(onPlay: (controller) => controller.repeat())
-                        .shimmer(
-                          duration: 1500.ms,
-                          color: _getResultColor(context, result).withOpacity(0.3),
-                        ),
-                    const SizedBox(width: 4),
-                    Text(
-                      targetNumber.toString(),
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                            fontWeight: FontWeight.w600,
-                          ),
-                    ),
-                  ],
-                ).animate().fadeIn(duration: 300.ms, delay: 100.ms),
             ],
           ),
       ],
