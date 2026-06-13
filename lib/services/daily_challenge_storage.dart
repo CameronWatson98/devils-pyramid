@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:devils_pyramid/models/daily_challenge_data.dart';
+import 'package:devils_pyramid/utils/app_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Service for persisting daily challenge state using SharedPreferences.
@@ -16,9 +17,8 @@ class DailyChallengeStorage {
       final json = data.toJson();
       final jsonString = jsonEncode(json);
       await _prefs.setString(_key, jsonString);
-    } catch (e) {
-      // If save fails, log but don't crash - user can continue playing
-      print('Error saving daily challenge: $e');
+    } catch (e, stack) {
+      logger.e('Failed to save daily challenge', error: e, stackTrace: stack);
     }
   }
 
@@ -32,9 +32,8 @@ class DailyChallengeStorage {
 
       final json = jsonDecode(jsonString) as Map<String, dynamic>;
       return DailyChallengeData.fromJson(json);
-    } catch (e) {
-      // If load fails (corrupt data), return null to create fresh challenge
-      print('Error loading daily challenge: $e');
+    } catch (e, stack) {
+      logger.w('Failed to load daily challenge, returning null', error: e, stackTrace: stack);
       return null;
     }
   }
@@ -46,8 +45,8 @@ class DailyChallengeStorage {
       if (saved != null && saved.date != currentDate) {
         await _prefs.remove(_key);
       }
-    } catch (e) {
-      print('Error clearing old challenges: $e');
+    } catch (e, stack) {
+      logger.w('Failed to clear old challenges', error: e, stackTrace: stack);
     }
   }
 

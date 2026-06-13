@@ -5,6 +5,7 @@ import 'package:devils_pyramid/models/daily_challenge_data.dart';
 import 'package:devils_pyramid/models/number_with_symbol.dart';
 import 'package:devils_pyramid/services/daily_challenge_storage.dart';
 import 'package:devils_pyramid/services/equation_generator.dart';
+import 'package:devils_pyramid/utils/app_logger.dart';
 import 'package:devils_pyramid/utils/date_seed.dart';
 import 'package:flutter/services.dart';
 
@@ -64,15 +65,17 @@ class EquationPyramidCubit extends Cubit<EquationPyramidState> {
 
   void checkSolution() async {
     if (state.attemptedSolutions.contains(state.selectedOptions)) {
-      print('Already attempted this solution: ${state.selectedOptions}');
+      // Failure haptic feedback
+      HapticFeedback.mediumImpact();
+      emit(state.copyWith(selectedOptions: []));
     } else {
       final solution = state.generator.isSolution(state.selectedOptions);
       final newAttempts = state.totalAttempts + 1;
 
       if (solution) {
+        logger.d('Correct solution submitted (attempt $newAttempts)');
         // Success haptic feedback
         HapticFeedback.heavyImpact();
-        print('Correct solution!');
         emit(
           state.copyWith(
             correctSolutions: Set.from(state.correctSolutions)
@@ -84,9 +87,9 @@ class EquationPyramidCubit extends Cubit<EquationPyramidState> {
           ),
         );
       } else {
+        logger.d('Incorrect solution submitted (attempt $newAttempts)');
         // Failure haptic feedback
         HapticFeedback.mediumImpact();
-        print('Incorrect solution: ${state.selectedOptions}');
         emit(
           state.copyWith(
             attemptedSolutions: Set.from(state.attemptedSolutions)
@@ -117,10 +120,10 @@ class EquationPyramidCubit extends Cubit<EquationPyramidState> {
     final saved = await _storage.loadDailyChallenge();
 
     if (saved != null && saved.date == todayStr) {
-      // Resume today's challenge
+      logger.i('Resuming daily challenge for $todayStr');
       _resumeDailyChallenge(saved);
     } else {
-      // Clear old challenge and create new one
+      logger.i('Creating new daily challenge for $todayStr');
       await _storage.clearOldChallenges(todayStr);
       await _createNewDailyChallenge(today, todayStr);
     }

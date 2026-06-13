@@ -29,10 +29,7 @@ void main() async {
 class MainApp extends StatelessWidget {
   final DailyChallengeStorage storage;
 
-  const MainApp({
-    super.key,
-    required this.storage,
-  });
+  const MainApp({super.key, required this.storage});
 
   @override
   Widget build(BuildContext context) {
